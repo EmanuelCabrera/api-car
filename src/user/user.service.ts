@@ -5,9 +5,11 @@ import { HttpException, HttpStatus } from '@nestjs/common';
 import { User, Prisma } from '@prisma/client'
 import { PrismaService } from 'src/service/prisma.service';
 import * as bcrypt from 'bcrypt';
+import { LoginDto } from '../jwt/dto/login.dto';
 
 @Injectable()
 export class UserService {
+  
   constructor(private prisma: PrismaService){
   }
 
@@ -86,6 +88,18 @@ export class UserService {
         throw new HttpException('Email is already in use', HttpStatus.BAD_REQUEST);
     }
   }
-
+  
+  async userLogin(loginDto: LoginDto) {
+    const user = await this.prisma.user.findUnique({where:{email:loginDto.email}});
+    if (!user) {
+      throw new HttpException('User not exist!!',HttpStatus.NOT_FOUND);
+    }
+    const match = await this.comparePasswords(loginDto.password, user.password);
+    if (match) {
+         return user;     
+    }else{
+      throw new HttpException('The password is incorrect!!',HttpStatus.NOT_FOUND);
+    }
+  }
 
 }
