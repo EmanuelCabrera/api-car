@@ -5,7 +5,7 @@ import { HttpException, HttpStatus } from '@nestjs/common';
 import { User, Prisma } from '@prisma/client'
 import { PrismaService } from 'src/service/prisma.service';
 import * as bcrypt from 'bcrypt';
-import { LoginDto } from '../jwt/dto/login.dto';
+import { LoginDto } from 'src/jwt/dto/login.dto';
 
 @Injectable()
 export class UserService {

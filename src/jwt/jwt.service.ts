@@ -5,6 +5,10 @@ import { jwtConstants } from '../jwt/jwt.constant'
 @Injectable()
 export class JwtService {
   signPayload(payload: any): string {
-    return jwt.sign(payload, jwtConstants.secret, { expiresIn: jwtConstants.expiresIn });
+    return jwt.sign(payload, jwtConstants.secret, { expiresIn: jwtConstants.expiresIn, algorithm: 'HS256' });
+  }
+  validToken(token: string){
+    console.log(token);
+    return jwt.verify(token, jwtConstants.secret, { algorithms: ['HS256'] }); 
   }
 }
