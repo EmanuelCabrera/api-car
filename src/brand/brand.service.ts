@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateBrandDto } from './dto/create-brand.dto';
 import { UpdateBrandDto } from './dto/update-brand.dto';
 import { Brand } from '@prisma/client'
-import { PrismaService } from '../service/prisma.service';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class BrandService {
@@ -12,7 +12,7 @@ export class BrandService {
     try {
       return await this.prisma.brand.create({data:createBrandDto})
     } catch (error) {
-      throw new HttpException(error, HttpStatus.BAD_REQUEST);
+      throw new HttpException(error.code == 'P2002'? "Brand already exist!!":error, HttpStatus.BAD_REQUEST);
     }
   }
 
