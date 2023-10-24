@@ -3,9 +3,9 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { User, Prisma } from '@prisma/client'
-import { PrismaService } from 'src/service/prisma.service';
+import { PrismaService } from 'src/prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
-import { LoginDto } from 'src/jwt/dto/login.dto';
+import { FindUserDto } from './dto/find-user.dto';
 
 @Injectable()
 export class UserService {
@@ -89,12 +89,12 @@ export class UserService {
     }
   }
   
-  async userLogin(loginDto: LoginDto) {
-    const user = await this.prisma.user.findUnique({where:{email:loginDto.email}});
+  async userLogin(userDto: FindUserDto) {
+    const user = await this.prisma.user.findUnique({where:{email:userDto.email}});
     if (!user) {
       throw new HttpException('User not exist!!',HttpStatus.NOT_FOUND);
     }
-    const match = await this.comparePasswords(loginDto.password, user.password);
+    const match = await this.comparePasswords(userDto.password, user.password);
     if (match) {
          return user;     
     }else{

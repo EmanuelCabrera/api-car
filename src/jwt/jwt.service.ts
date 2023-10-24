@@ -8,7 +8,6 @@ export class JwtService {
     return jwt.sign(payload, jwtConstants.secret, { expiresIn: jwtConstants.expiresIn, algorithm: 'HS256' });
   }
   validToken(token: string){
-    console.log(token);
     return jwt.verify(token, jwtConstants.secret, { algorithms: ['HS256'] }); 
   }
 }

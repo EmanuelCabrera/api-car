@@ -7,16 +7,17 @@ export class JwtMiddleware implements NestMiddleware {
   constructor(private readonly jwtService: JwtService ) {}
   
   use(req: Request, res: Response, next: NextFunction) {
-    const token = req.headers.authorization;
-    if (!token) {
+    const bearerHeader = req.headers.authorization;
+    if (!bearerHeader) {
       return res.status(401).json({ message: 'Unauthorized' });
     }
+    const accessToken = bearerHeader && bearerHeader.split(' ')[1];
+
     try {
-      const decoded = this.jwtService.validToken(token);
+      const decoded = this.jwtService.validToken(accessToken);
       req['user'] = decoded;
       next();
     } catch (error) {
-      console.log(error);
       return res.status(401).json({ message: 'Invalid token' });
     }
   }
