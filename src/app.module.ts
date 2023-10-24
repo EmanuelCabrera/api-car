@@ -9,9 +9,10 @@ import { JwtMiddleware } from './jwt/jwt.middleware';
 import { JwtService } from './jwt/jwt.service';
 import { APP_GUARD } from '@nestjs/core';
 import { RoleGuard } from './jwt/guards/role.guard';
+import { PostModule } from './post/post.module';
 
 @Module({
-  imports: [UserModule, BrandModule, JwtModule, CarModule],
+  imports: [UserModule, BrandModule, JwtModule, CarModule, PostModule],
   controllers: [AppController],
   providers: [AppService, JwtService,
     {provide: APP_GUARD,

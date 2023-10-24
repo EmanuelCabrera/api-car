@@ -1,4 +1,4 @@
 export const jwtConstants = {
-    secret: 'misecreto', // Replace this with a secure secret key
+    secret: process.env.JWT_SECRET_KEY,
     expiresIn: '1h', // Token expiration time
 };

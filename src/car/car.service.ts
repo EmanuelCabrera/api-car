@@ -15,7 +15,7 @@ export class CarService {
     try {
       return await this.prisma.car.create({data:createCarDto});
     } catch (error) {
-      throw new HttpException(error.code == 'P2002'? "Brand already exist!!":error, HttpStatus.BAD_REQUEST);
+      throw new HttpException(error.code == 'P2002'? "Car already exist!!":error, HttpStatus.BAD_REQUEST);
     }
   }
 
