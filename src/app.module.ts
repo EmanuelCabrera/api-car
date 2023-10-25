@@ -10,13 +10,16 @@ import { JwtService } from './jwt/jwt.service';
 import { APP_GUARD } from '@nestjs/core';
 import { RoleGuard } from './jwt/guards/role.guard';
 import { PostModule } from './post/post.module';
+import { FileService } from './file/file.service';
+import { PrismaService } from './prisma/prisma.service';
 
 @Module({
   imports: [UserModule, BrandModule, JwtModule, CarModule, PostModule],
   controllers: [AppController],
-  providers: [AppService, JwtService,
+  providers: [AppService,PrismaService, JwtService,
     {provide: APP_GUARD,
-      useClass: RoleGuard,}
+      useClass: RoleGuard,},
+    FileService
   ],
 })
 export class AppModule {

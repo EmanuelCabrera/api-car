@@ -28,6 +28,8 @@ model Post {
   validDate DateTime?
   author    User?     @relation(fields: [authorId], references: [id])
   authorId  Int?
+  carId     Int
+  brandId   Int
   file      File[]
 }
 
