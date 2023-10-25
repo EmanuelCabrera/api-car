@@ -3,16 +3,20 @@ import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { Post } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
+import { CreateFileDto } from '../file/dto/createFile.dto';
+import { FileService } from '../file/file.service';
 
 @Injectable()
 export class PostService {
-  constructor(private prisma: PrismaService){}
+  constructor(private prisma: PrismaService, private fileservice: FileService){}
 
   async create(createPostDto: CreatePostDto):Promise<Post> {
     createPostDto.validDate = new Date();
 
     try {
-      return await this.prisma.post.create({data:createPostDto});
+      const post = await this.prisma.post.create({data:createPostDto});
+      await this.createFileByPost(post.id, createPostDto.files);
+      return post;
     } catch (error) {
       throw new HttpException(error.code == 'P2002'? "Post already exist!!":error, HttpStatus.BAD_REQUEST);
     }
@@ -44,5 +48,16 @@ export class PostService {
     } catch (error) {
       throw new HttpException("Post not exist!!",HttpStatus.NOT_FOUND);
     }
+  }
+
+  async createFileByPost(postId: number, createFilesDto: CreateFileDto[]):Promise<File[]>{
+    let files = [];
+    createFilesDto.forEach(fileDto => {
+      fileDto.postId = postId;
+      const file = this.fileservice.create(fileDto);
+      files.push(file);
+    });
+
+    return files;
   }
 }

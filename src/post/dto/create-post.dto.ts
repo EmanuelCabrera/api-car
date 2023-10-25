@@ -6,5 +6,7 @@ export class CreatePostDto {
     published: boolean;
     validDate?: Date;
     authorId: number;
+    carId:number;
+    brandId:number;
     files:CreateFileDto[]
 }

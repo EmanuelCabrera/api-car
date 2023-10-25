@@ -9,7 +9,7 @@ export class PostController {
   constructor(private readonly postService: PostService) {}
 
   @Post()
-  @Role('Admin', 'Manager','Costumer')
+  @Role('Admin', 'Manager','Custumer')
   create(@Body() createPostDto: CreatePostDto) {
     return this.postService.create(createPostDto);
   }
@@ -25,13 +25,13 @@ export class PostController {
   }
 
   @Patch(':id')
-  @Role('Admin', 'Manager','Costumer')
+  @Role('Admin', 'Manager','Custumer')
   update(@Param('id') id: string, @Body() updatePostDto: UpdatePostDto) {
     return this.postService.update(+id, updatePostDto);
   }
 
   @Delete(':id')
-  @Role('Admin', 'Manager','Costumer')
+  @Role('Admin', 'Manager','Custumer')
   remove(@Param('id') id: string) {
     return this.postService.remove(+id);
   }

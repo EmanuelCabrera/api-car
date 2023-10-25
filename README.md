@@ -66,3 +66,11 @@ $ npx prisma db push
 
 $ npx prisma generate 
 ```
+
+## Comandos para cargar los seeds
+
+```bash
+
+node prisma/seeds/*.seed.ts
+
+```
