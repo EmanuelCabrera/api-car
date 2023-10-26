@@ -12,9 +12,10 @@ import { RoleGuard } from './jwt/guards/role.guard';
 import { PostModule } from './post/post.module';
 import { FileService } from './file/file.service';
 import { PrismaService } from './prisma/prisma.service';
+import { FileModule } from './file/file.module';
 
 @Module({
-  imports: [UserModule, BrandModule, JwtModule, CarModule, PostModule],
+  imports: [UserModule, BrandModule, JwtModule, CarModule, PostModule, FileModule],
   controllers: [AppController],
   providers: [AppService,PrismaService, JwtService,
     {provide: APP_GUARD,
@@ -26,6 +27,6 @@ export class AppModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(JwtMiddleware)
-      .forRoutes('brand','car');
+      .forRoutes('brand','car','post');
   }
 }

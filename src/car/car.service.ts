@@ -11,7 +11,6 @@ export class CarService {
  async create(createCarDto: CreateCarDto):Promise<Car> {
   
     createCarDto.model = new Date(createCarDto.model);
-    console.log(createCarDto);
     try {
       return await this.prisma.car.create({data:createCarDto});
     } catch (error) {

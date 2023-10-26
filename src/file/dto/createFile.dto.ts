@@ -1,5 +1,5 @@
 export class CreateFileDto {
     name: string;
-    base64:string;
+    fileId:number;
     postId:number;
 }

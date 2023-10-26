@@ -7,11 +7,25 @@ import { File } from '@prisma/client';
 export class FileService {
     constructor(private prisma:PrismaService){}
 
-    async create(createFileDto: CreateFileDto):Promise<File>{
+    async create(file: Express.Multer.File):Promise<File>{
         try {
-            return await this.prisma.file.create({data:createFileDto});
+            console.log(file);
+            return await this.prisma.file.create({
+                data:{
+                    name:file.filename,
+                    base64: file.destination
+                }
+            });
         } catch (error) {
             throw new HttpException(error,HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    async assignPostId(fileDto: CreateFileDto):Promise<File>{
+        try {
+            return this.prisma.file.update({where:{id:fileDto.fileId},data:{postId:fileDto.postId}})
+        } catch (error) {
+            throw new HttpException('Not assign post id',HttpStatus.BAD_REQUEST);
         }
     }
 
