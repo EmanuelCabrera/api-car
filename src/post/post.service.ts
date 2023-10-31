@@ -57,7 +57,9 @@ export class PostService {
 
   async remove(id: number):Promise<Post> {
     try {
-      return this.prisma.post.delete({where: {id}});
+      const post = await this.prisma.post.delete({where: {id}});
+      this.fileservice.removeFileByPostId(post.id);
+      return post;
     } catch (error) {
       throw new HttpException("Post not exist!!",HttpStatus.NOT_FOUND);
     }

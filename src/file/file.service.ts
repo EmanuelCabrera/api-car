@@ -36,4 +36,16 @@ export class FileService {
             throw new HttpException("Not existe files in this post",HttpStatus.NOT_FOUND);
         }
     }
+
+    async removeFileByPostId(postId: number):Promise<File[]>{
+        const files = await this.findAllByPostId(postId);
+        files.forEach(async (file) => {
+            try {
+                await this.prisma.file.delete({where:{id:file.id}});
+            } catch (error) {
+                throw new HttpException("file not exist!!",HttpStatus.NOT_FOUND);
+            }
+        });
+        return files;
+    }
 }
