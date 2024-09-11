@@ -27,7 +27,7 @@
 ## Installation 
 
 ```bash
-$ npm install
+$ npm install #Pasos recomendados
 ```
 
 ## Running the app
@@ -37,7 +37,7 @@ $ npm install
 $ npm run start
 
 # watch mode
-$ npm run start:dev
+$ npm run start:dev #Pasos recomendados
 
 # production mode
 $ npm run start:prod
@@ -62,15 +62,15 @@ $ npx prisma migrate dev --name init
 
 # para subir los cambios a la bd 
 
-$ npx prisma db push  
+$ npx prisma db push  #Pasos recomendados
 
-$ npx prisma generate 
+$ npx prisma generate #Pasos recomendados
 ```
 
 ## Comandos para cargar los seeds
 
 ```bash
 
-node prisma/seeds/*.seed.ts
+npx ts-node prisma/seeds/seed.ts #Pasos recomendados
 
 ```
