@@ -9,24 +9,52 @@ export class FileService {
 
     async create(file: Express.Multer.File):Promise<File>{
         try {
-            console.log(file);
+            if (!file) {
+                throw new HttpException('No file provided', HttpStatus.BAD_REQUEST);
+            }
+            
             return await this.prisma.file.create({
-                data:{
-                    name:file.filename,
-                    base64: file.destination
+                data: {
+                    name: file.filename,
+                    base64: file.path // Usamos path en lugar de destination
                 }
             });
         } catch (error) {
-            throw new HttpException(error,HttpStatus.BAD_REQUEST);
+            throw new HttpException(error.message || 'Error creating file', HttpStatus.BAD_REQUEST);
         }
     }
 
-    async assignPostId(fileDto: CreateFileDto):Promise<File>{
+    async assignPostId(fileDto: CreateFileDto):Promise<File | null>{
         try {
-            return this.prisma.file.update({where:{id:fileDto.fileId},data:{postId:fileDto.postId}})
+            const file = await this.prisma.file.findUnique({
+                where: { id: fileDto.fileId }
+            });
+            
+            if (!file) {
+                console.log(`File with id ${fileDto.fileId} not found`);
+                return null;
+            }
+
+            return this.prisma.file.update({
+                where: { id: fileDto.fileId },
+                data: { postId: fileDto.postId }
+            });
         } catch (error) {
-            throw new HttpException('Not assign post id',HttpStatus.BAD_REQUEST);
+            console.error('Error assigning post to file:', error);
+            return null;
         }
+    }
+
+    async assignFileByPost(postId: number, createFilesDto: CreateFileDto[]):Promise<File[]>{
+        const files = [];
+        for (const fileDto of createFilesDto) {
+            fileDto.postId = postId;
+            const file = await this.assignPostId(fileDto);
+            if (file) {
+                files.push(file);
+            }
+        }
+        return files;
     }
 
     async findAllByPostId(postId: number):Promise<File[]>{
