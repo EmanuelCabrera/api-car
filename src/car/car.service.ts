@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateCarDto } from './dto/create-car.dto';
 import { UpdateCarDto } from './dto/update-car.dto';
 import { Car } from '@prisma/client';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class CarService {
@@ -11,11 +11,10 @@ export class CarService {
  async create(createCarDto: CreateCarDto):Promise<Car> {
   
     createCarDto.model = new Date(createCarDto.model);
-    console.log(createCarDto);
     try {
       return await this.prisma.car.create({data:createCarDto});
     } catch (error) {
-      throw new HttpException(error.code == 'P2002'? "Brand already exist!!":error, HttpStatus.BAD_REQUEST);
+      throw new HttpException(error.code == 'P2002'? "Car already exist!!":error, HttpStatus.BAD_REQUEST);
     }
   }
 

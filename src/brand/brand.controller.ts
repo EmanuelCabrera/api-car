@@ -2,14 +2,15 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { BrandService } from './brand.service';
 import { CreateBrandDto } from './dto/create-brand.dto';
 import { UpdateBrandDto } from './dto/update-brand.dto';
-import { Role } from 'src/jwt/decorators/role.decorator';
+import { Role } from '../jwt/decorators/role.decorator';
+import { UserRole } from '../jwt/enums/roles.enum';
 
 @Controller('brand')
 export class BrandController {
   constructor(private readonly brandService: BrandService) {}
 
   @Post()
-  @Role('Admin', 'Manager')
+  @Role(UserRole.ADMIN, UserRole.MANAGER)
   create(@Body() createBrandDto: CreateBrandDto) {
     return this.brandService.create(createBrandDto);
   }
@@ -25,13 +26,13 @@ export class BrandController {
   }
 
   @Patch(':id')
-  @Role('Admin', 'Manager')
+  @Role(UserRole.ADMIN, UserRole.MANAGER)
   update(@Param('id') id: string, @Body() updateBrandDto: UpdateBrandDto) {
     return this.brandService.update(+id, updateBrandDto);
   }
 
   @Delete(':id')
-  @Role('Admin', 'Manager')
+  @Role(UserRole.ADMIN, UserRole.MANAGER)
   remove(@Param('id') id: string) {
     return this.brandService.remove(+id);
   }

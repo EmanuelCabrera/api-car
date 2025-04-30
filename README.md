@@ -19,8 +19,6 @@
     <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
   <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
 </p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
 
 ## Description
 
@@ -29,7 +27,7 @@
 ## Installation 
 
 ```bash
-$ npm install
+$ npm install #Pasos recomendados
 ```
 
 ## Running the app
@@ -39,7 +37,7 @@ $ npm install
 $ npm run start
 
 # watch mode
-$ npm run start:dev
+$ npm run start:dev #Pasos recomendados
 
 # production mode
 $ npm run start:prod
@@ -58,16 +56,21 @@ $ npm run test:e2e
 $ npm run test:cov
 ```
 
-## Support
+## Comandos para migrar la bd 
+```bash
+$ npx prisma migrate dev --name init
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+# para subir los cambios a la bd 
 
-## Stay in touch
+$ npx prisma db push  #Pasos recomendados
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+$ npx prisma generate #Pasos recomendados
+```
 
-## License
+## Comandos para cargar los seeds
 
-Nest is [MIT licensed](LICENSE).
+```bash
+
+npx ts-node prisma/seeds/seed.ts #Pasos recomendados
+
+```
