@@ -4,7 +4,7 @@ import { JwtService } from '../jwt/jwt.service';
 import { UserService } from '../user/user.service';
 import { LoginDto } from './dto/login.dto';
 
-@Controller('auth')
+@Controller('auth/jwt')
 export class AuthController {
   constructor(private readonly jwtService: JwtService,private readonly userService: UserService ) {}
 

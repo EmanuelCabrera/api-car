@@ -9,9 +9,13 @@ import { PostModule } from './post/post.module';
 import { FileService } from './file/file.service';
 import { PrismaService } from './prisma/prisma.service';
 import { FileModule } from './file/file.module';
-
+import { AuthModule } from './auth/auth.module';
+import { ConfigModule } from '@nestjs/config';
 @Module({
-  imports: [UserModule, BrandModule, JwtModule, CarModule, PostModule, FileModule],
+  imports: [ConfigModule.forRoot({
+    isGlobal: true,
+    envFilePath: '.env',
+  }),UserModule, BrandModule, JwtModule, CarModule, PostModule, FileModule, AuthModule],
   controllers: [AppController],
   providers: [AppService, PrismaService, FileService],
 })
