@@ -4,7 +4,8 @@ export class CreatePostDto {
     title: string;
     content: string;
     published: boolean;
-    validDate?: Date;
+    createAt?: Date;
+    expiredAt?: Date;
     authorId: number;
     carId:number;
     brandId:number;

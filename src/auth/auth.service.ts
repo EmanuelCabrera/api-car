@@ -11,7 +11,8 @@ export class AuthService {
       sub: user.id,
       name: user.name,
       surname: user.surname,
-      picture: user.picture
+      picture: user.picture,
+      role: user.role
     };
 
     return {
