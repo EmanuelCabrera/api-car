@@ -1,4 +1,3 @@
-
 import { Controller, Post, Body } from '@nestjs/common';
 import { JwtService } from '../jwt/jwt.service';
 import { UserService } from '../user/user.service';
@@ -11,8 +10,8 @@ export class AuthController {
   @Post('login')
   async login(@Body() loginDto: LoginDto): Promise<{ token: string }> {
     const user = await this.userService.userLogin(loginDto);
-    // Assuming user credentials are valid, generate and return a JWT token
-    const token = this.jwtService.signPayload({ userId: user.id, name: user.name, role: user.role});
+    // Unificar el payload: usar 'sub' como identificador estándar JWT
+    const token = this.jwtService.signPayload({ sub: user.id, name: user.name, role: user.role });
     return { token };
   }
 }
