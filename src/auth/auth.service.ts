@@ -1,3 +1,4 @@
+
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '../prisma/prisma.service';
@@ -21,11 +22,13 @@ export class AuthService {
       role: user.role
     };
 
+
     // Generar token con duración de 15 minutos
     const access_token = this.jwtService.sign(payload, { expiresIn: '15m' });
 
     return {
       access_token,
+
       user: {
         id: user.id,
         email: user.email,
@@ -72,4 +75,5 @@ export class AuthService {
   isTokenRevoked(token: string): boolean {
     return this.revokedTokens.has(token);
   }
+
 } 

@@ -7,6 +7,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { USER_REPOSITORY } from '../user/interfaces/user.interface';
 import { PrismaUserRepository } from '../user/repositories/user.repository';
 
+
 @Module({
   controllers: [AuthController],
   providers: [
@@ -18,6 +19,7 @@ import { PrismaUserRepository } from '../user/repositories/user.repository';
       provide: USER_REPOSITORY,
       useClass: PrismaUserRepository
     }
+
   ],
   exports: [JwtService]
 })
