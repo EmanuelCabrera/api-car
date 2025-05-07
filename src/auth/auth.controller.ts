@@ -1,4 +1,4 @@
-import { Controller, Get, Req, Res, UseGuards } from '@nestjs/common';
+import { Controller, Get, Req, Res, UseGuards, Post } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
 import { Response } from 'express';
@@ -45,5 +45,14 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   async verifyToken(@Req() req) {
     return req.user;
+  }
+
+  @Post('renew')
+  @UseGuards(JwtAuthGuard)
+  async renewToken(@Req() req) {
+    if (!req.user || !req.user.id) {
+      throw new Error('Invalid user data in token');
+    }
+    return this.authService.renewToken(req.user.id);
   }
 } 

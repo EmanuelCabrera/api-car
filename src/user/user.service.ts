@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { HttpException, HttpStatus } from '@nestjs/common';
@@ -6,72 +6,53 @@ import { User, Prisma } from '@prisma/client'
 import { PrismaService } from '../prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
 import { FindUserDto } from './dto/find-user.dto';
-
+import { IUserRepository, USER_REPOSITORY } from './interfaces/user.interface';
+import { USER_ERRORS } from './constants/user.constant';
 @Injectable()
 export class UserService {
   
-  constructor(private prisma: PrismaService){
-  }
-
-  async user(
-    userWhereUniqueInput: Prisma.UserWhereUniqueInput,
-  ): Promise<User | null> {
-    return this.prisma.user.findUnique({
-      where: userWhereUniqueInput,
-    });
-  }
-
-  async users(params: {
-    skip?: number;
-    take?: number;
-    cursor?: Prisma.UserWhereUniqueInput;
-    where?: Prisma.UserWhereInput;
-    orderBy?: Prisma.UserOrderByWithRelationInput;
-  }): Promise<User[]> {
-    const { skip, take, cursor, where, orderBy } = params;
-    return this.prisma.user.findMany({
-      skip,
-      take,
-      cursor,
-      where,
-      orderBy,
-    });
-  }
+  constructor(
+    @Inject(USER_REPOSITORY)
+    private userRepository: IUserRepository,
+  ){}
 
   async create(createUserDto: CreateUserDto):Promise<User> {
     createUserDto.password = await this.hashPassword(createUserDto.password);
-    try {
-      const newUser = await this.prisma.user.create({
-        data:createUserDto
-      });
+    try { 
+      const newUser = await this.userRepository.create(createUserDto);
       return newUser;
     } catch (error) {
       this.handleError(error.code)
     }
   }
 
-  async findAll():Promise<User[]> {
-    return await this.prisma.user.findMany()
+  async findAll(page: number, limit: number):Promise<User[]> {
+    return await this.userRepository.findAll(page, limit)
   }
 
-  async findOne(id: number):Promise<User> {
-    return await this.prisma.user.findUnique({where:{id}})
+  async findOne(id: number):Promise<User> { 
+    const user = await this.userRepository.findById(id)
+    if (!user) {
+      throw new HttpException(USER_ERRORS.NOT_FOUND, HttpStatus.BAD_REQUEST);
+    }
+    return user
   }
 
   async update(id: number, updateUserDto: UpdateUserDto):Promise<User> {
-    const user = await this.prisma.user.findUnique({where:{id}});
+    const user = await this.userRepository.findById(id);
     if (!user) {
-      throw new HttpException('User not exist', HttpStatus.BAD_REQUEST);
+      throw new HttpException(USER_ERRORS.NOT_FOUND, HttpStatus.BAD_REQUEST);
     }
     updateUserDto.password = await this.hashPassword(updateUserDto.password);
-    return await this.prisma.user.update({
-        where:{id},
-        data:updateUserDto
-    })
+    return await this.userRepository.update(id, updateUserDto)
   }
 
   async remove(id: number):Promise<User> {
-    return this.prisma.user.delete({where:{id}})
+    const user = await this.userRepository.findById(id);
+    if (!user) {
+      throw new HttpException(USER_ERRORS.NOT_FOUND, HttpStatus.BAD_REQUEST);
+    }
+    return await this.userRepository.delete(id) 
   }
 
   async hashPassword(password: string): Promise<string> {
@@ -85,20 +66,20 @@ export class UserService {
 
   handleError(error: string){
     if (error == 'P2002') {
-        throw new HttpException('Email is already in use', HttpStatus.BAD_REQUEST);
+        throw new HttpException(USER_ERRORS.ALREADY_EXISTS, HttpStatus.BAD_REQUEST);
     }
   }
   
   async userLogin(userDto: FindUserDto) {
-    const user = await this.prisma.user.findUnique({where:{email:userDto.email}});
+    const user = await this.userRepository.findByEmail(userDto.email);
     if (!user) {
-      throw new HttpException('User not exist!!',HttpStatus.NOT_FOUND);
+      throw new HttpException(USER_ERRORS.NOT_FOUND,HttpStatus.NOT_FOUND);
     }
     const match = await this.comparePasswords(userDto.password, user.password);
     if (match) {
          return user;     
     }else{
-      throw new HttpException('The password is incorrect!!',HttpStatus.NOT_FOUND);
+      throw new HttpException(USER_ERRORS.INVALID_PASSWORD,HttpStatus.NOT_FOUND);
     }
   }
 
