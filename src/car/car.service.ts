@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable, Inject } from '@nestjs/common';
 import { CreateCarDto } from './dto/create-car.dto';
 import { UpdateCarDto } from './dto/update-car.dto';
 import { Car } from '@prisma/client';
-import { ICarRepository, CAR_REPOSITORY } from './interfaces/car-repository.interface';
+import { ICarRepository, CAR_REPOSITORY } from './interfaces/car.interface';
 import { CAR_ERRORS } from './constants/car.constants';
 
 @Injectable()

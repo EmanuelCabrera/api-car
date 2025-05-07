@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
-import { ICarRepository } from '../interfaces/car-repository.interface';
+import { ICarRepository } from '../interfaces/car.interface';
 import { Car } from '@prisma/client';
 import { CreateCarDto } from '../dto/create-car.dto';
 import { UpdateCarDto } from '../dto/update-car.dto';

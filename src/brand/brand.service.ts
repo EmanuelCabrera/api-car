@@ -1,46 +1,53 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, Inject } from '@nestjs/common';
 import { CreateBrandDto } from './dto/create-brand.dto';
 import { UpdateBrandDto } from './dto/update-brand.dto';
 import { Brand } from '@prisma/client'
-import { PrismaService } from '../prisma/prisma.service';
-
+import { BRAND_REPOSITORY, IBrandRepository } from './interfaces/brand.interface';
+import { BRAND_ERRORS } from './constants/brand.constants';
 @Injectable()
 export class BrandService {
-  constructor(private prisma: PrismaService){}
+  constructor(
+    @Inject(BRAND_REPOSITORY)
+    private brandRepository: IBrandRepository
+  ){}
 
   async create(createBrandDto: CreateBrandDto):Promise<Brand> {
+
     try {
-      return await this.prisma.brand.create({data:createBrandDto})
+      return await this.brandRepository.create(createBrandDto)
     } catch (error) {
-      throw new HttpException(error.code == 'P2002'? "Brand already exist!!":error, HttpStatus.BAD_REQUEST);
+      throw new HttpException(
+        error.code == 'P2002'? BRAND_ERRORS.ALREADY_EXISTS:error,
+        HttpStatus.BAD_REQUEST
+      );
     }
   }
 
-  async findAll():Promise<Brand[]> {
-    return await this.prisma.brand.findMany();
+  async findAll(page = 1, limit = 10):Promise<Brand[]> {
+    return await this.brandRepository.findAll(page, limit);
   }
 
   async findOne(id: number):Promise<Brand> {
-    const brand = await this.prisma.brand.findUnique({where:{id}});
+    const brand = await this.brandRepository.findById(id);
     if (!brand) {
-      throw new HttpException("Brand not exist", HttpStatus.NOT_FOUND);
+      throw new HttpException(BRAND_ERRORS.NOT_FOUND, HttpStatus.NOT_FOUND);
     }
     return brand;
   }
 
   async update(id: number, updateBrandDto: UpdateBrandDto):Promise<Brand> {
-    const brand =  await this.prisma.brand.findUnique({where:{id}});
+    const brand =  await this.brandRepository.findById(id);
     if (!brand) {
-      throw new HttpException("Brand not exist", HttpStatus.NOT_FOUND);
+      throw new HttpException(BRAND_ERRORS.NOT_FOUND, HttpStatus.NOT_FOUND);
     }
-    return await this.prisma.brand.update({where:{id},data:updateBrandDto});
+    return await this.brandRepository.update(id, updateBrandDto);
   }
 
   async remove(id: number):Promise<Brand> {
     try {
-      return await this.prisma.brand.delete({where:{id}});
+      return await this.brandRepository.delete(id);
     } catch (error) {
-      throw new HttpException("Brand not exist", HttpStatus.NOT_FOUND);
+      throw new HttpException(BRAND_ERRORS.NOT_FOUND, HttpStatus.NOT_FOUND);
     }
   }
 }
