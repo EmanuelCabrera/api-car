@@ -1,11 +1,15 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
 import { CarService } from './car.service';
 import { CreateCarDto } from './dto/create-car.dto';
 import { UpdateCarDto } from './dto/update-car.dto';
 import { Role } from '../jwt/decorators/role.decorator';
 import { UserRole } from '../jwt/enums/roles.enum';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { RoleGuard } from '../jwt/guards/role.guard';
+import { Public } from '@/jwt/decorators/public.decorator';
 
 @Controller('car')
+@UseGuards(JwtAuthGuard, RoleGuard)
 export class CarController {
   constructor(private readonly carService: CarService) {}
 
@@ -15,11 +19,13 @@ export class CarController {
     return this.carService.create(createCarDto);
   }
 
+  @Public()
   @Get()
   findAll() {
     return this.carService.findAll();
   }
 
+  @Public()
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.carService.findOne(+id);

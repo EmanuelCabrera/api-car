@@ -6,7 +6,7 @@ export class UpdatePostDto extends PartialType(CreatePostDto) {
     title?: string;
     content?: string;
     published?: boolean;
-    validDate?: Date;
+    expiredAt?: Date;
     carId?: number;
     brandId?: number;
     files?: CreateFileDto[];

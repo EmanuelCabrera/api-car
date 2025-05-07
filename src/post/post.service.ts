@@ -11,8 +11,9 @@ export class PostService {
   constructor(private prisma: PrismaService, private fileservice: FileService){}
 
   async create(createPostDto: CreatePostDto):Promise<Post> {
-    createPostDto.validDate = new Date();
-    createPostDto.validDate.setDate(createPostDto.validDate.getDate() + 10);
+    createPostDto.createAt = new Date();
+    createPostDto.expiredAt = new Date();
+    createPostDto.expiredAt.setDate(createPostDto.expiredAt.getDate() + 15);
     try {
       const post = await this.prisma.post.create(
         {
@@ -24,7 +25,8 @@ export class PostService {
             authorId:createPostDto.authorId,
             brandId:createPostDto.brandId,
             carId:createPostDto.carId,
-            validDate:createPostDto.validDate
+            expiredAt:createPostDto.expiredAt,
+            createAt:createPostDto.createAt
           }
         });
       await this.assignFileByPost(post.id, createPostDto.files);
