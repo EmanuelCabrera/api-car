@@ -2,8 +2,7 @@ import { Injectable, Inject } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { HttpException, HttpStatus } from '@nestjs/common';
-import { User, Prisma } from '@prisma/client'
-import { PrismaService } from '../prisma/prisma.service';
+import { User } from '@prisma/client'
 import * as bcrypt from 'bcrypt';
 import { FindUserDto } from './dto/find-user.dto';
 import { IUserRepository, USER_REPOSITORY } from './interfaces/user.interface';

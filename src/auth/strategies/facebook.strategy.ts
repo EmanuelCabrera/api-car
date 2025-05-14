@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
-import { Strategy, VerifyCallback } from 'passport-facebook';
+import { Strategy } from 'passport-facebook';
 import { PrismaService } from '../../prisma/prisma.service';
 import { UserRole } from '@/jwt/enums/roles.enum';
+
 @Injectable()
 export class FacebookStrategy extends PassportStrategy(Strategy, 'facebook') {
   constructor(private prisma: PrismaService) {
@@ -18,7 +19,7 @@ export class FacebookStrategy extends PassportStrategy(Strategy, 'facebook') {
     accessToken: string,
     refreshToken: string,
     profile: any,
-    done: VerifyCallback,
+    done: (error: any, user?: any) => void,
   ): Promise<any> {
     const { name, emails, photos } = profile;
     const userData = {
@@ -28,21 +29,23 @@ export class FacebookStrategy extends PassportStrategy(Strategy, 'facebook') {
       picture: photos[0].value,
       role: UserRole.CUSTOMER,
       provider: 'facebook',
-      password: null
+      password: null,
     };
 
-    // Check if user exists in database
-    let dbUser = await this.prisma.user.findUnique({
-      where: { email: userData.email },
-    });
-
-    // If user doesn't exist, create new user
-    if (!dbUser) {
-      dbUser = await this.prisma.user.create({
-        data: userData,
+    try {
+      let user = await this.prisma.user.findUnique({
+        where: { email: userData.email },
       });
-    }
 
-    done(null, dbUser);
+      if (!user) {
+        user = await this.prisma.user.create({
+          data: userData,
+        });
+      }
+
+      done(null, user);
+    } catch (error) {
+      done(error, null);
+    }
   }
 } 

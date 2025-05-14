@@ -10,6 +10,7 @@ import { PrismaService } from './prisma/prisma.service';
 import { FileModule } from './file/file.module';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
+import { VersionModule } from './version/version.module';
 
 @Module({
   imports: [
@@ -23,7 +24,8 @@ import { ConfigModule } from '@nestjs/config';
     CarModule,
     PostModule,
     FileModule,
-    AuthModule
+    AuthModule,
+    VersionModule
   ],
   controllers: [AppController],
   providers: [AppService, PrismaService],
