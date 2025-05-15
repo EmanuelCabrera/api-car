@@ -41,6 +41,8 @@ model Car {
   name    String   @unique
   brand   Brand?   @relation(fields: [brandId], references: [id])
   brandId Int?
+  category Category? @relation(fields: [categoryId], references: [id])
+  categoryId Int?
   model   DateTime
   version Version[]
 }
@@ -64,4 +66,10 @@ model Version {
   name String
   car  Car  @relation(fields: [carId], references: [id])
   carId Int
+}
+
+model Category {
+  id   Int    @id @default(autoincrement())
+  name String @unique
+  car Car[]
 }

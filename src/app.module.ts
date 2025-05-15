@@ -11,6 +11,7 @@ import { FileModule } from './file/file.module';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
 import { VersionModule } from './version/version.module';
+import { CategoryModule } from './category/category.module';
 
 @Module({
   imports: [
@@ -25,7 +26,8 @@ import { VersionModule } from './version/version.module';
     PostModule,
     FileModule,
     AuthModule,
-    VersionModule
+    VersionModule,
+    CategoryModule
   ],
   controllers: [AppController],
   providers: [AppService, PrismaService],
