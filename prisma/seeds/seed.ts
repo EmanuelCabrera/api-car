@@ -6,14 +6,14 @@ const prisma = new PrismaClient();
 async function userSeed() {
   const password = await hashPassword("1234");
   try {
-    await prisma.user.createMany({
+    await prisma.User.createMany({
       data: [
         {name:"admin", surname:"",email:"admin@admin.com",role:"Admin",password:password},
         {name:"manager", surname:"",email:"manager@admin.com",role:"Manager",password:password},
         {name:"custumer", surname:"",email:"custumer@admin.com",role:"Custumer",password:password}
       ],
     });
-    await prisma.brand.createMany({
+    await prisma.Brand.createMany({
       data:[
           {name:"Nissan"},
           {name:"Ford"},
@@ -21,7 +21,7 @@ async function userSeed() {
           {name:"Fiat"}
       ]
     });
-    await prisma.car.createMany({
+    await prisma.Car.createMany({
       data:[
           {name:"Sentra",brandId:1,model:new Date()},
           {name:"Versa",brandId:1,model:new Date()},
@@ -31,6 +31,19 @@ async function userSeed() {
           {name:"Uno",brandId:4,model:new Date()}
       ]
     });
+    await prisma.Version.createMany({
+      data:[
+        {name:"Caja manual 5 velocidades",carId:1},
+        {name:"Caja automática 6 velocidades",carId:1},
+        {name:"Caja manual 5 velocidades",carId:2},
+        {name:"Caja automática 6 velocidades",carId:2},
+        {name:"Caja manual 5 velocidades",carId:3},
+        {name:"Caja automática 6 velocidades",carId:3},
+        {name:"Caja manual 5 velocidades",carId:4},
+        {name:"Caja automática 6 velocidades",carId:4},
+        
+      ]
+    })
 
     console.log('Seed data inserted successfully.');
   } catch (error) {

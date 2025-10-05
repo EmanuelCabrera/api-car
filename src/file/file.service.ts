@@ -1,43 +1,46 @@
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus, Inject } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateFileDto } from './dto/createFile.dto';
 import { File } from '@prisma/client';
+import { FILE_REPOSITORY, IFileRepository } from './interfaces/file.interface';
+import { FILE_ERRORS } from './constants/file.constants';
 
 @Injectable()
 export class FileService {
-    constructor(private prisma:PrismaService){}
+    constructor(
+        private prisma: PrismaService,
+        @Inject(FILE_REPOSITORY)
+        private fileRepository: IFileRepository
+    ) {}
 
-    async create(file: Express.Multer.File):Promise<File>{
+    async create(file: Express.Multer.File): Promise<File> {
         try {
             if (!file) {
                 throw new HttpException('No file provided', HttpStatus.BAD_REQUEST);
             }
             
-            return await this.prisma.file.create({
-                data: {
-                    name: file.filename,
-                    base64: file.path // Usamos path en lugar de destination
-                }
+            return await this.fileRepository.create({
+                name: file.filename,
+                base64: file.path,
+                fileId: null,
+                postId: null
             });
         } catch (error) {
-            throw new HttpException(error.message || 'Error creating file', HttpStatus.BAD_REQUEST);
+            throw new HttpException(error.message || FILE_ERRORS.FILE_CREATION_ERROR, HttpStatus.BAD_REQUEST);
         }
     }
 
-    async assignPostId(fileDto: CreateFileDto):Promise<File | null>{
+    async assignPostId(fileDto: CreateFileDto): Promise<File | null> {
         try {
-            const file = await this.prisma.file.findUnique({
-                where: { id: fileDto.fileId }
-            });
+            const file = await this.fileRepository.findById(fileDto.fileId);
             
             if (!file) {
                 console.log(`File with id ${fileDto.fileId} not found`);
                 return null;
             }
 
-            return this.prisma.file.update({
-                where: { id: fileDto.fileId },
-                data: { postId: fileDto.postId }
+            return this.fileRepository.update(fileDto.fileId, {
+                postId: fileDto.postId
             });
         } catch (error) {
             console.error('Error assigning post to file:', error);
@@ -45,7 +48,7 @@ export class FileService {
         }
     }
 
-    async assignFileByPost(postId: number, createFilesDto: CreateFileDto[]):Promise<File[]>{
+    async assignFileByPost(postId: number, createFilesDto: CreateFileDto[]): Promise<File[]> {
         const files = [];
         for (const fileDto of createFilesDto) {
             fileDto.postId = postId;
@@ -57,21 +60,21 @@ export class FileService {
         return files;
     }
 
-    async findAllByPostId(postId: number):Promise<File[]>{
+    async findAllByPostId(postId: number): Promise<File[]> {
         try {
             return await this.prisma.file.findMany({where:{postId:postId}});
         } catch (error) {
-            throw new HttpException("Not existe files in this post",HttpStatus.NOT_FOUND);
+            throw new HttpException(FILE_ERRORS.FILE_NOT_FOUND, HttpStatus.NOT_FOUND);
         }
     }
 
-    async removeFileByPostId(postId: number):Promise<File[]>{
+    async removeFileByPostId(postId: number): Promise<File[]> {
         const files = await this.findAllByPostId(postId);
         files.forEach(async (file) => {
             try {
-                await this.prisma.file.delete({where:{id:file.id}});
+                await this.fileRepository.delete(file.id);
             } catch (error) {
-                throw new HttpException("file not exist!!",HttpStatus.NOT_FOUND);
+                throw new HttpException(FILE_ERRORS.FILE_NOT_FOUND, HttpStatus.NOT_FOUND);
             }
         });
         return files;

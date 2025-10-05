@@ -6,17 +6,30 @@ import { BrandModule } from './brand/brand.module';
 import { JwtModule } from './jwt/jwt.module';
 import { CarModule } from './car/car.module';
 import { PostModule } from './post/post.module';
-import { FileService } from './file/file.service';
 import { PrismaService } from './prisma/prisma.service';
 import { FileModule } from './file/file.module';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
+import { VersionModule } from './version/version.module';
+import { CategoryModule } from './category/category.module';
+
 @Module({
-  imports: [ConfigModule.forRoot({
-    isGlobal: true,
-    envFilePath: '.env',
-  }),UserModule, BrandModule, JwtModule, CarModule, PostModule, FileModule, AuthModule],
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: '.env',
+    }),
+    UserModule,
+    BrandModule,
+    JwtModule,
+    CarModule,
+    PostModule,
+    FileModule,
+    AuthModule,
+    VersionModule,
+    CategoryModule
+  ],
   controllers: [AppController],
-  providers: [AppService, PrismaService, FileService],
+  providers: [AppService, PrismaService],
 })
 export class AppModule {}
